@@ -74,3 +74,30 @@ export interface LaundryBatch {
 }
 
 export const LAUNDRY_STATUSES: LaundryStatus[] = ['待洗', '已完成', '已取消'];
+
+export type DryCleaningStatus = '送洗中' | '已取回' | '已取消';
+
+export interface DryCleaningRating {
+  score: number;
+  comment: string;
+  createdAt: string;
+}
+
+export interface DryCleaningRecord {
+  id: string;
+  garmentIds: string[];
+  sendDate: string;
+  laundryShop: string;
+  pickupDate: string;
+  cost: number;
+  status: DryCleaningStatus;
+  reminderEnabled: boolean;
+  reminderShown: boolean;
+  rating?: DryCleaningRating;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+  pickedUpAt?: string;
+}
+
+export const DRY_CLEANING_STATUSES: DryCleaningStatus[] = ['送洗中', '已取回', '已取消'];

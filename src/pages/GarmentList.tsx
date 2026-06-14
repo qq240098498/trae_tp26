@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Sparkles, X, WashingMachine } from 'lucide-react';
+import { Plus, Search, Sparkles, X, WashingMachine, Droplets } from 'lucide-react';
 import { useGarmentStore } from '@/store/garmentStore';
 import { GARMENT_TYPES, MATERIALS, GarmentType, Material } from '@/types/garment';
 import GarmentCard from '@/components/GarmentCard';
@@ -55,6 +55,13 @@ export default function GarmentList() {
               </div>
               {garments.length > 0 && (
                 <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => navigate('/dry-cleaning')}
+                    className="w-10 h-10 rounded-full bg-white border border-cream-200 text-lavender-500 flex items-center justify-center shadow-sm hover:bg-lavender-50 hover:border-lavender-200 transition-all duration-200 active:scale-95"
+                    title="送洗记录"
+                  >
+                    <Droplets className="w-5 h-5" />
+                  </button>
                   <button
                     onClick={() => navigate('/laundry')}
                     className="w-10 h-10 rounded-full bg-white border border-cream-200 text-lavender-500 flex items-center justify-center shadow-sm hover:bg-lavender-50 hover:border-lavender-200 transition-all duration-200 active:scale-95"
