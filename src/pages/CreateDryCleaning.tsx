@@ -54,11 +54,20 @@ export default function CreateDryCleaning() {
   }, [isEditing, id, getById]);
 
   const dryCleanOnlyGarments = useMemo(() => {
-    return garments.filter((g) => g.careMethods.includes('干洗' as CareMethod));
+    return garments.filter((g) => {
+      if (g.careMethods.length === 0) return false;
+      if (g.careMethods.includes('干洗' as CareMethod)) return true;
+      if (!g.careMethods.includes('水洗' as CareMethod)) return true;
+      return g.careMethods.some((m) =>
+        ['水温≤30°', '不可漂白', '不可烘干', '低温熨烫'].includes(m)
+      );
+    });
   }, [garments]);
 
   const displayedGarments = useMemo(() => {
-    let result = searchQuery.trim() ? search(searchQuery) : dryCleanOnlyGarments;
+    let result = searchQuery.trim()
+      ? search(searchQuery).filter((g) => dryCleanOnlyGarments.some((dg) => dg.id === g.id))
+      : dryCleanOnlyGarments;
     if (selectedType) {
       result = result.filter((g) => g.type === selectedType);
     }
@@ -346,7 +355,7 @@ export default function CreateDryCleaning() {
           <div className="mb-3 p-3 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-2">
             <AlertCircle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
             <p className="text-xs text-amber-700">
-              以下是需要干洗或特殊护理的衣物。普通水洗衣物请使用「洗衣批次」功能。
+              以下是需要干洗或特殊护理的衣物（如不可水洗、不可烘干、低温熨烫等）。普通水洗衣物请使用「洗衣批次」功能。
             </p>
           </div>
 
@@ -356,13 +365,13 @@ export default function CreateDryCleaning() {
                 <Shirt className="w-7 h-7 text-cream-400" />
               </div>
               <p className="text-sm text-charcoal-300 mb-3 text-center">
-                还没有需要干洗的衣物
+                还没有需要干洗或特殊护理的衣物
               </p>
               <button
                 onClick={() => navigate('/add')}
                 className="text-xs text-lavender-500 font-medium hover:text-lavender-600 transition-colors"
               >
-                去添加需要干洗的衣物 →
+                去添加需要干洗或特殊护理的衣物 →
               </button>
             </div>
           ) : (
