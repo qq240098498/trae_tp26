@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'garment-care:garments';
+const LAUNDRY_STORAGE_KEY = 'garment-care:laundry-batches';
 
 export function loadGarmentsFromStorage<T>(): T[] {
   try {
@@ -14,6 +15,23 @@ export function saveGarmentsToStorage<T>(garments: T[]): void {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(garments));
   } catch (e) {
     console.error('Failed to save garments:', e);
+  }
+}
+
+export function loadLaundryBatchesFromStorage<T>(): T[] {
+  try {
+    const data = localStorage.getItem(LAUNDRY_STORAGE_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveLaundryBatchesToStorage<T>(batches: T[]): void {
+  try {
+    localStorage.setItem(LAUNDRY_STORAGE_KEY, JSON.stringify(batches));
+  } catch (e) {
+    console.error('Failed to save laundry batches:', e);
   }
 }
 

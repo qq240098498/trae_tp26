@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Sparkles, X } from 'lucide-react';
+import { Plus, Search, Sparkles, X, WashingMachine } from 'lucide-react';
 import { useGarmentStore } from '@/store/garmentStore';
 import { GARMENT_TYPES, MATERIALS, GarmentType, Material } from '@/types/garment';
 import GarmentCard from '@/components/GarmentCard';
@@ -54,12 +54,22 @@ export default function GarmentList() {
                 </p>
               </div>
               {garments.length > 0 && (
-                <button
-                  onClick={() => navigate('/add')}
-                  className="w-10 h-10 rounded-full bg-lavender-400 text-white flex items-center justify-center shadow-md hover:bg-lavender-500 hover:shadow-lg transition-all duration-200 active:scale-95"
-                >
-                  <Plus className="w-5 h-5" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => navigate('/laundry')}
+                    className="w-10 h-10 rounded-full bg-white border border-cream-200 text-lavender-500 flex items-center justify-center shadow-sm hover:bg-lavender-50 hover:border-lavender-200 transition-all duration-200 active:scale-95"
+                    title="洗衣批次管理"
+                  >
+                    <WashingMachine className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => navigate('/add')}
+                    className="w-10 h-10 rounded-full bg-lavender-400 text-white flex items-center justify-center shadow-md hover:bg-lavender-500 hover:shadow-lg transition-all duration-200 active:scale-95"
+                    title="添加衣物"
+                  >
+                    <Plus className="w-5 h-5" />
+                  </button>
+                </div>
               )}
             </div>
 

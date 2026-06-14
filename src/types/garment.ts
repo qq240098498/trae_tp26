@@ -45,3 +45,32 @@ export const MATERIAL_COLORS: Record<Material, string> = {
   '混纺': 'bg-purple-100 text-purple-800',
   '其他': 'bg-gray-100 text-gray-700',
 };
+
+export type LaundryStatus = '待洗' | '已完成' | '已取消';
+
+export interface CompatibilityConflict {
+  type: string;
+  description: string;
+  garmentIds: [string, string];
+  garmentNames: [string, string];
+  conflictingMethods: [CareMethod, CareMethod];
+  suggestion: string;
+}
+
+export interface CompatibilityResult {
+  isCompatible: boolean;
+  conflicts: CompatibilityConflict[];
+  groups: Garment[][];
+}
+
+export interface LaundryBatch {
+  id: string;
+  name: string;
+  garmentIds: string[];
+  status: LaundryStatus;
+  createdAt: string;
+  updatedAt: string;
+  completedAt?: string;
+}
+
+export const LAUNDRY_STATUSES: LaundryStatus[] = ['待洗', '已完成', '已取消'];
