@@ -63,38 +63,36 @@ export default function GarmentList() {
                     : '科学管理，精致护理'}
                 </p>
               </div>
-              {garments.length > 0 && (
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => navigate('/seasonal-storage')}
-                    className="w-10 h-10 rounded-full bg-white border border-cream-200 text-lavender-500 flex items-center justify-center shadow-sm hover:bg-lavender-50 hover:border-lavender-200 transition-all duration-200 active:scale-95"
-                    title="换季收纳"
-                  >
-                    <Package className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => navigate('/dry-cleaning')}
-                    className="w-10 h-10 rounded-full bg-white border border-cream-200 text-lavender-500 flex items-center justify-center shadow-sm hover:bg-lavender-50 hover:border-lavender-200 transition-all duration-200 active:scale-95"
-                    title="送洗记录"
-                  >
-                    <Droplets className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => navigate('/laundry')}
-                    className="w-10 h-10 rounded-full bg-white border border-cream-200 text-lavender-500 flex items-center justify-center shadow-sm hover:bg-lavender-50 hover:border-lavender-200 transition-all duration-200 active:scale-95"
-                    title="洗衣批次管理"
-                  >
-                    <WashingMachine className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => navigate('/add')}
-                    className="w-10 h-10 rounded-full bg-lavender-400 text-white flex items-center justify-center shadow-md hover:bg-lavender-500 hover:shadow-lg transition-all duration-200 active:scale-95"
-                    title="添加衣物"
-                  >
-                    <Plus className="w-5 h-5" />
-                  </button>
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => navigate('/seasonal-storage')}
+                  className="w-10 h-10 rounded-full bg-white border border-cream-200 text-lavender-500 flex items-center justify-center shadow-sm hover:bg-lavender-50 hover:border-lavender-200 transition-all duration-200 active:scale-95"
+                  title="换季收纳"
+                >
+                  <Package className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => navigate('/dry-cleaning')}
+                  className="w-10 h-10 rounded-full bg-white border border-cream-200 text-lavender-500 flex items-center justify-center shadow-sm hover:bg-lavender-50 hover:border-lavender-200 transition-all duration-200 active:scale-95"
+                  title="送洗记录"
+                >
+                  <Droplets className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => navigate('/laundry')}
+                  className="w-10 h-10 rounded-full bg-white border border-cream-200 text-lavender-500 flex items-center justify-center shadow-sm hover:bg-lavender-50 hover:border-lavender-200 transition-all duration-200 active:scale-95"
+                  title="洗衣批次管理"
+                >
+                  <WashingMachine className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => navigate('/add')}
+                  className="w-10 h-10 rounded-full bg-lavender-400 text-white flex items-center justify-center shadow-md hover:bg-lavender-500 hover:shadow-lg transition-all duration-200 active:scale-95"
+                  title="添加衣物"
+                >
+                  <Plus className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {garments.length > 0 && (
@@ -258,13 +256,22 @@ export default function GarmentList() {
             <p className="text-charcoal-200 text-sm text-center max-w-xs mb-8">
               添加您的第一件衣物，记录洗护要求，不再为洗错衣服而烦恼
             </p>
-            <button
-              onClick={() => navigate('/add')}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-pill bg-lavender-400 text-white font-medium shadow-md hover:bg-lavender-500 hover:shadow-lg transition-all duration-200 active:scale-95"
-            >
-              <Plus className="w-4 h-4" />
-              添加衣物
-            </button>
+            <div className="flex flex-col gap-3 w-full max-w-xs">
+              <button
+                onClick={() => navigate('/add')}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-pill bg-lavender-400 text-white font-medium shadow-md hover:bg-lavender-500 hover:shadow-lg transition-all duration-200 active:scale-95"
+              >
+                <Plus className="w-4 h-4" />
+                添加衣物
+              </button>
+              <button
+                onClick={() => navigate('/seasonal-storage')}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-pill bg-white border border-cream-200 text-charcoal-400 font-medium shadow-sm hover:bg-cream-50 hover:border-cream-300 transition-all duration-200 active:scale-95"
+              >
+                <Package className="w-4 h-4" />
+                换季收纳管理
+              </button>
+            </div>
           </div>
         ) : displayedGarments.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4">
@@ -305,16 +312,22 @@ export default function GarmentList() {
         )}
       </main>
 
-      {garments.length > 0 && (
-        <div className="fixed bottom-6 right-6 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-20">
-          <button
-            onClick={() => navigate('/add')}
-            className="w-14 h-14 rounded-full bg-lavender-400 text-white flex items-center justify-center shadow-lg hover:bg-lavender-500 hover:shadow-xl transition-all duration-200 active:scale-95 sm:hidden"
-          >
-            <Plus className="w-6 h-6" />
-          </button>
-        </div>
-      )}
+      <div className="fixed bottom-6 right-6 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-20 flex flex-col gap-3 sm:hidden">
+        <button
+          onClick={() => navigate('/seasonal-storage')}
+          className="w-12 h-12 rounded-full bg-white border border-cream-200 text-lavender-500 flex items-center justify-center shadow-lg hover:bg-lavender-50 hover:border-lavender-200 transition-all duration-200 active:scale-95"
+          title="换季收纳"
+        >
+          <Package className="w-5 h-5" />
+        </button>
+        <button
+          onClick={() => navigate('/add')}
+          className="w-14 h-14 rounded-full bg-lavender-400 text-white flex items-center justify-center shadow-lg hover:bg-lavender-500 hover:shadow-xl transition-all duration-200 active:scale-95"
+          title="添加衣物"
+        >
+          <Plus className="w-6 h-6" />
+        </button>
+      </div>
     </div>
   );
 }
