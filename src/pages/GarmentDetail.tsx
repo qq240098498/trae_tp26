@@ -1,23 +1,26 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Edit3, Trash2, Calendar, Tag, Shirt, X } from 'lucide-react';
+import { ArrowLeft, Edit3, Trash2, Calendar, Tag, Shirt, X, MapPin, Package, Sun, Snowflake, Leaf, Flower2, Sparkles } from 'lucide-react';
 import { useGarmentStore } from '@/store/garmentStore';
-import { MATERIAL_COLORS, Garment } from '@/types/garment';
+import { MATERIAL_COLORS, SEASON_COLORS, STORAGE_STATUS_COLORS, Garment, StorageStatus } from '@/types/garment';
 import CareMethodBadge from '@/components/CareMethodBadge';
 
 export default function GarmentDetail() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { getById, remove } = useGarmentStore();
+  const { getById, remove, setStorageStatus } = useGarmentStore();
   const [garment, setGarment] = useState<Garment | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [enlargedPhoto, setEnlargedPhoto] = useState<string | null>(null);
+  const [showLocationEdit, setShowLocationEdit] = useState(false);
+  const [tempLocation, setTempLocation] = useState('');
 
   useEffect(() => {
     if (id) {
       const found = getById(id);
       if (found) {
         setGarment(found);
+        setTempLocation(found.storageLocation || '');
       } else {
         navigate('/');
       }
@@ -31,9 +34,37 @@ export default function GarmentDetail() {
     }
   };
 
+  const toggleStorageStatus = () => {
+    if (!garment) return;
+    const newStatus: StorageStatus = garment.storageStatus === '当前可穿' ? '换季收纳' : '当前可穿';
+    setStorageStatus(garment.id, newStatus);
+    const updated = getById(garment.id);
+    if (updated) setGarment(updated);
+  };
+
+  const saveLocation = () => {
+    if (!garment) return;
+    setStorageStatus(garment.id, garment.storageStatus, tempLocation.trim());
+    const updated = getById(garment.id);
+    if (updated) setGarment(updated);
+    setShowLocationEdit(false);
+  };
+
+  const getSeasonIcon = (season: string) => {
+    switch (season) {
+      case '春季': return <Flower2 className="w-4 h-4" />;
+      case '夏季': return <Sun className="w-4 h-4" />;
+      case '秋季': return <Leaf className="w-4 h-4" />;
+      case '冬季': return <Snowflake className="w-4 h-4" />;
+      default: return <Sparkles className="w-4 h-4" />;
+    }
+  };
+
   if (!garment) return null;
 
   const materialColor = MATERIAL_COLORS[garment.material] || 'bg-gray-100 text-gray-700';
+  const seasonColor = SEASON_COLORS[garment.season] || 'bg-gray-100 text-gray-700';
+  const storageStatusColor = STORAGE_STATUS_COLORS[garment.storageStatus] || 'bg-gray-100 text-gray-700';
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '未填写';
@@ -110,6 +141,124 @@ export default function GarmentDetail() {
               </span>
             </div>
           </div>
+        </section>
+
+        <section className="bg-white rounded-2xl shadow-soft p-5 border border-cream-200/60 animate-slide-up">
+          <h3 className="text-sm font-semibold text-charcoal-400 uppercase tracking-wider mb-4">
+            季节与收纳
+          </h3>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-cream-50 flex items-center justify-center flex-shrink-0">
+                <span className={seasonColor}>{getSeasonIcon(garment.season)}</span>
+              </div>
+              <div>
+                <p className="text-xs text-charcoal-200">适用季节</p>
+                <p className="text-sm font-medium text-charcoal-500 mt-0.5">
+                  {garment.season}
+                </p>
+              </div>
+            </div>
+            <span className={`inline-flex items-center px-2.5 py-1 rounded-pill text-xs font-medium ${seasonColor}`}>
+              {garment.season}
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-cream-50 flex items-center justify-center flex-shrink-0">
+                <Package className="w-4 h-4 text-cream-400" />
+              </div>
+              <div>
+                <p className="text-xs text-charcoal-200">收纳状态</p>
+                <p className="text-sm font-medium text-charcoal-500 mt-0.5">
+                  {garment.storageStatus}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={toggleStorageStatus}
+              className={`inline-flex items-center px-3 py-1.5 rounded-pill text-xs font-medium transition-all duration-200 ${storageStatusColor} hover:opacity-80`}
+            >
+              {garment.storageStatus === '当前可穿' ? '标记为收纳' : '标记为可穿'}
+            </button>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-cream-50 flex items-center justify-center flex-shrink-0">
+                  <MapPin className="w-4 h-4 text-cream-400" />
+                </div>
+                <div>
+                  <p className="text-xs text-charcoal-200">存放位置</p>
+                  {!showLocationEdit && (
+                    <p className="text-sm font-medium text-charcoal-500 mt-0.5">
+                      {garment.storageLocation || '未设置'}
+                    </p>
+                  )}
+                </div>
+              </div>
+              {!showLocationEdit && (
+                <button
+                  onClick={() => {
+                    setTempLocation(garment.storageLocation || '');
+                    setShowLocationEdit(true);
+                  }}
+                  className="text-xs text-lavender-500 font-medium hover:text-lavender-600 transition-colors"
+                >
+                  编辑
+                </button>
+              )}
+            </div>
+            {showLocationEdit ? (
+              <div className="flex gap-2 ml-11">
+                <input
+                  type="text"
+                  value={tempLocation}
+                  onChange={(e) => setTempLocation(e.target.value)}
+                  placeholder="如：主卧衣柜顶层"
+                  className="flex-1 px-3 py-2 rounded-lg border border-cream-200 text-sm text-charcoal-500 placeholder:text-cream-400 focus:outline-none focus:ring-2 focus:ring-lavender-200 focus:border-lavender-300 transition-all"
+                  autoFocus
+                />
+                <button
+                  onClick={saveLocation}
+                  className="px-3 py-2 rounded-lg bg-lavender-400 text-white text-xs font-medium hover:bg-lavender-500 transition-colors"
+                >
+                  保存
+                </button>
+                <button
+                  onClick={() => setShowLocationEdit(false)}
+                  className="px-3 py-2 rounded-lg border border-cream-200 text-xs font-medium text-charcoal-300 hover:bg-cream-50 transition-colors"
+                >
+                  取消
+                </button>
+              </div>
+            ) : garment.storageLocation ? (
+              <p className="text-xs text-charcoal-200 ml-11">
+                {garment.storageLocation}
+              </p>
+            ) : null}
+          </div>
+
+          {(garment.lastStorageDate || garment.lastRetrievalDate) && (
+            <div className="pt-3 border-t border-cream-100 space-y-2">
+              {garment.lastStorageDate && (
+                <div className="flex items-center gap-3 text-xs text-charcoal-200">
+                  <span className="w-24 flex-shrink-0">上次收纳</span>
+                  <span>{formatDate(garment.lastStorageDate)}</span>
+                </div>
+              )}
+              {garment.lastRetrievalDate && (
+                <div className="flex items-center gap-3 text-xs text-charcoal-200">
+                  <span className="w-24 flex-shrink-0">上次取出</span>
+                  <span>{formatDate(garment.lastRetrievalDate)}</span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
         </section>
 
         <section className="bg-white rounded-2xl shadow-soft p-5 border border-cream-200/60 animate-slide-up">

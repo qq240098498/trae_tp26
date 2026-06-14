@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Sparkles, X, WashingMachine, Droplets } from 'lucide-react';
+import { Plus, Search, Sparkles, X, WashingMachine, Droplets, Package } from 'lucide-react';
 import { useGarmentStore } from '@/store/garmentStore';
-import { GARMENT_TYPES, MATERIALS, GarmentType, Material } from '@/types/garment';
+import { GARMENT_TYPES, MATERIALS, SEASONS, GarmentType, Material, Season, SEASON_COLORS, StorageStatus, STORAGE_STATUS_COLORS } from '@/types/garment';
 import GarmentCard from '@/components/GarmentCard';
 
 export default function GarmentList() {
@@ -11,6 +11,8 @@ export default function GarmentList() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<GarmentType | null>(null);
   const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(null);
+  const [selectedSeason, setSelectedSeason] = useState<Season | null>(null);
+  const [selectedStorageStatus, setSelectedStorageStatus] = useState<StorageStatus | null>(null);
 
   useEffect(() => {
     load();
@@ -24,17 +26,25 @@ export default function GarmentList() {
     if (selectedMaterial) {
       result = result.filter((g) => g.material === selectedMaterial);
     }
+    if (selectedSeason) {
+      result = result.filter((g) => g.season === selectedSeason);
+    }
+    if (selectedStorageStatus) {
+      result = result.filter((g) => g.storageStatus === selectedStorageStatus);
+    }
     return result.sort(
       (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
     );
-  }, [garments, searchQuery, selectedType, selectedMaterial, search]);
+  }, [garments, searchQuery, selectedType, selectedMaterial, selectedSeason, selectedStorageStatus, search]);
 
-  const hasFilters = selectedType || selectedMaterial || searchQuery.trim();
+  const hasFilters = selectedType || selectedMaterial || selectedSeason || selectedStorageStatus || searchQuery.trim();
 
   const clearFilters = () => {
     setSearchQuery('');
     setSelectedType(null);
     setSelectedMaterial(null);
+    setSelectedSeason(null);
+    setSelectedStorageStatus(null);
   };
 
   return (
@@ -55,6 +65,13 @@ export default function GarmentList() {
               </div>
               {garments.length > 0 && (
                 <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => navigate('/seasonal-storage')}
+                    className="w-10 h-10 rounded-full bg-white border border-cream-200 text-lavender-500 flex items-center justify-center shadow-sm hover:bg-lavender-50 hover:border-lavender-200 transition-all duration-200 active:scale-95"
+                    title="换季收纳"
+                  >
+                    <Package className="w-5 h-5" />
+                  </button>
                   <button
                     onClick={() => navigate('/dry-cleaning')}
                     className="w-10 h-10 rounded-full bg-white border border-cream-200 text-lavender-500 flex items-center justify-center shadow-sm hover:bg-lavender-50 hover:border-lavender-200 transition-all duration-200 active:scale-95"
@@ -158,6 +175,71 @@ export default function GarmentList() {
                     {mat}
                   </button>
                 ))}
+              </div>
+
+              <div className="flex gap-1.5 overflow-x-auto scrollbar-none -mx-1 px-1">
+                <button
+                  onClick={() => setSelectedSeason(null)}
+                  className={`flex-shrink-0 px-3 py-1 rounded-pill text-xs font-medium transition-all duration-200 ${
+                    !selectedSeason
+                      ? 'bg-charcoal-500 text-white'
+                      : 'bg-white text-charcoal-300 border border-cream-200 hover:border-cream-300'
+                  }`}
+                >
+                  全部季节
+                </button>
+                {SEASONS.map((season) => {
+                  const isSelected = selectedSeason === season;
+                  const colorClass = SEASON_COLORS[season] || 'bg-gray-100 text-gray-700';
+                  return (
+                    <button
+                      key={season}
+                      onClick={() =>
+                        setSelectedSeason(isSelected ? null : season)
+                      }
+                      className={`flex-shrink-0 px-3 py-1 rounded-pill text-xs font-medium transition-all duration-200 ${
+                        isSelected
+                          ? `${colorClass} ring-2 ring-offset-1 ring-lavender-300`
+                          : 'bg-white text-charcoal-300 border border-cream-200 hover:border-cream-300'
+                      }`}
+                    >
+                      {season}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="flex gap-1.5 overflow-x-auto scrollbar-none -mx-1 px-1">
+                <button
+                  onClick={() => setSelectedStorageStatus(null)}
+                  className={`flex-shrink-0 px-3 py-1 rounded-pill text-xs font-medium transition-all duration-200 ${
+                    !selectedStorageStatus
+                      ? 'bg-charcoal-500 text-white'
+                      : 'bg-white text-charcoal-300 border border-cream-200 hover:border-cream-300'
+                  }`}
+                >
+                  全部状态
+                </button>
+                {['当前可穿', '换季收纳'].map((status) => {
+                  const s = status as StorageStatus;
+                  const isSelected = selectedStorageStatus === s;
+                  const colorClass = STORAGE_STATUS_COLORS[s] || 'bg-gray-100 text-gray-700';
+                  return (
+                    <button
+                      key={s}
+                      onClick={() =>
+                        setSelectedStorageStatus(isSelected ? null : s)
+                      }
+                      className={`flex-shrink-0 px-3 py-1 rounded-pill text-xs font-medium transition-all duration-200 ${
+                        isSelected
+                          ? `${colorClass} ring-2 ring-offset-1 ring-lavender-300`
+                          : 'bg-white text-charcoal-300 border border-cream-200 hover:border-cream-300'
+                      }`}
+                    >
+                      {s}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}

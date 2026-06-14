@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save, X } from 'lucide-react';
+import { ArrowLeft, Save, X, MapPin } from 'lucide-react';
 import { useGarmentStore } from '@/store/garmentStore';
-import { GARMENT_TYPES, MATERIALS, CARE_METHODS, GarmentType, Material, CareMethod } from '@/types/garment';
+import { GARMENT_TYPES, MATERIALS, CARE_METHODS, SEASONS, GarmentType, Material, CareMethod, Season, StorageStatus, SEASON_COLORS } from '@/types/garment';
 import PhotoUploader from '@/components/PhotoUploader';
 import CareMethodBadge from '@/components/CareMethodBadge';
 
@@ -20,6 +20,9 @@ export default function AddEditGarment() {
   const [purchasePrice, setPurchasePrice] = useState('');
   const [careMethods, setCareMethods] = useState<CareMethod[]>([]);
   const [labelPhotos, setLabelPhotos] = useState<string[]>([]);
+  const [season, setSeason] = useState<Season>('四季');
+  const [storageStatus, setStorageStatus] = useState<StorageStatus>('当前可穿');
+  const [storageLocation, setStorageLocation] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -34,6 +37,9 @@ export default function AddEditGarment() {
         setPurchasePrice(garment.purchasePrice.toString());
         setCareMethods(garment.careMethods);
         setLabelPhotos(garment.labelPhotos);
+        setSeason(garment.season || '四季');
+        setStorageStatus(garment.storageStatus || '当前可穿');
+        setStorageLocation(garment.storageLocation || '');
       } else {
         navigate('/');
       }
@@ -67,6 +73,9 @@ export default function AddEditGarment() {
       purchasePrice: purchasePrice ? parseFloat(purchasePrice) : 0,
       careMethods,
       labelPhotos,
+      season,
+      storageStatus,
+      storageLocation: storageLocation.trim(),
     };
 
     if (isEdit && id) {
@@ -208,6 +217,88 @@ export default function AddEditGarment() {
                   />
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-white rounded-2xl shadow-soft p-5 border border-cream-200/60">
+          <h2 className="text-sm font-semibold text-charcoal-400 uppercase tracking-wider mb-4">
+            季节与收纳
+          </h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-charcoal-400 mb-2">
+                适用季节
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {SEASONS.map((s) => {
+                  const isSelected = season === s;
+                  const colorClass = SEASON_COLORS[s] || 'bg-gray-100 text-gray-700';
+                  return (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => setSeason(s)}
+                      className={`px-3 py-1.5 rounded-pill text-xs font-medium transition-all duration-200 ${
+                        isSelected
+                          ? `${colorClass} ring-2 ring-offset-1 ring-lavender-300`
+                          : 'bg-cream-50 text-charcoal-300 border border-cream-200 hover:border-cream-300'
+                      }`}
+                    >
+                      {s}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-charcoal-400 mb-2">
+                收纳状态
+              </label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setStorageStatus('当前可穿')}
+                  className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    storageStatus === '当前可穿'
+                      ? 'bg-emerald-100 text-emerald-700 ring-2 ring-emerald-300'
+                      : 'bg-cream-50 text-charcoal-300 border border-cream-200 hover:border-cream-300'
+                  }`}
+                >
+                  当前可穿
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStorageStatus('换季收纳')}
+                  className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    storageStatus === '换季收纳'
+                      ? 'bg-slate-100 text-slate-600 ring-2 ring-slate-300'
+                      : 'bg-cream-50 text-charcoal-300 border border-cream-200 hover:border-cream-300'
+                  }`}
+                >
+                  换季收纳
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-charcoal-400 mb-1.5">
+                存放位置
+              </label>
+              <div className="relative">
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cream-400" />
+                <input
+                  type="text"
+                  value={storageLocation}
+                  onChange={(e) => setStorageLocation(e.target.value)}
+                  placeholder="如：主卧衣柜顶层、床下收纳箱"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-cream-200 text-sm text-charcoal-500 placeholder:text-cream-400 focus:outline-none focus:ring-2 focus:ring-lavender-200 focus:border-lavender-300 transition-all"
+                />
+              </div>
+              <p className="text-xs text-charcoal-200 mt-1.5">
+                记录衣物存放位置，换季时方便查找
+              </p>
             </div>
           </div>
         </section>

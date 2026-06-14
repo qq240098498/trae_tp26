@@ -7,6 +7,7 @@ import CreateLaundryBatch from "@/pages/CreateLaundryBatch";
 import DryCleaningList from "@/pages/DryCleaningList";
 import CreateDryCleaning from "@/pages/CreateDryCleaning";
 import RateDryCleaning from "@/pages/RateDryCleaning";
+import SeasonalStorage from "@/pages/SeasonalStorage";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/dry-cleaning/create" element={<CreateDryCleaning />} />
         <Route path="/dry-cleaning/edit/:id" element={<CreateDryCleaning />} />
         <Route path="/dry-cleaning/rate/:id" element={<RateDryCleaning />} />
+        <Route path="/seasonal-storage" element={<SeasonalStorage />} />
       </Routes>
     </Router>
   );
